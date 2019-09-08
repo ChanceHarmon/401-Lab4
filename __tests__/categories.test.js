@@ -35,7 +35,7 @@ describe('Categories Model', () => {
     let obj = { name: 'Test Category' };
     return categories.create(obj)
       .then(record => {
-        return categories.get(record._id)
+        return categories.get(record.id)
           .then(category => {
             Object.keys(obj).forEach(key => {
               expect(category[0][key]).toEqual(obj[key]);
@@ -44,30 +44,34 @@ describe('Categories Model', () => {
       });
   });
 
-  it('can update() a name', () => {
-    let obj = { name: 'bob' };
-    return categories.create({ name: 'new name' })
+  it('can update() a category', () => {
+    let obj = { name: 'Test Category' };
+    return categories.create(obj)
       .then(record => {
-        return categories.update(record.id, { id: record.id, name: 'bob' })
-          .then(category => {
-            Object.keys(obj).forEach(key => {
-              expect(category[key]).toEqual(obj[key]);
-            });
-          });
-      });
+        return categories.update(record.id, { id: record.id, name: 'Tom' });
+      })
+
+      .then(newRecord => {
+        expect(newRecord['name']).toEqual('Tom');
+      })
+
+  });
+
+  it('can delete() a category', () => {
+    //create a new object in the database
+    let obj = { name: 'Test Category' };
+    return categories.create(obj)
+
+      //delete the object in the database, also get the database to check if the obj is really deleted
+      .then(record => {
+        console.log(record);
+        return categories.delete(record.id);
+      })
+
+      .then(newDatabase => {
+        expect(newDatabase).toEqual([]);
+      })
+
   });
 
 });
-
-// it('can delete() an id', () => {
-//   let obj = { record.id };
-//   return categories.create({ id: record.id })
-//     .then(record => {
-//       return categories.delete({ id: record._id })
-//         .then(record => {
-
-//           expect(record).toBe(false);
-//         });
-//     });
-// });
-

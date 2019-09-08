@@ -28,31 +28,31 @@ class Model {
 
   delete(id) {
     this.database = this.database.filter((record) => record.id !== id);
-    return Promise.resolve();
+    return Promise.resolve(this.database);
   }
 
-  // Vinicio - this would be our 'isValid', but it changes the data if it finds anything wrong
   sanitize(entry) {
-
     let valid = true;
     let record = {};
-    // Vinicio - this code is checking that properties are present in objects
-    // Vinicio - your goal is to change that to check for types as well
-    // Please take inspiration from lab 02
 
     Object.keys(this.schema).forEach(field => {
       if (this.schema[field].required) {
         if (entry[field]) {
-          record[field] = entry[field];
+          if (typeof entry[field] === this.schema[field].type) {
+            record[field] = entry[field];
+          } else {
+            valid = false;
+          }
         } else {
           valid = false;
         }
       }
       else {
-        record[field] = entry[field];
+        if (typeof entry[field] === this.schema[field].type) {
+          record[field] = entry[field];
+        }
       }
     });
-
     return valid ? record : undefined;
   }
 
